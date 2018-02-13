@@ -18,10 +18,10 @@ sprites.push(cat);
 
 //The Box
 let box = Object.create(spriteObject);
-box.height = box.sourceHeight * 1.5;
-box.width = box.sourceWidth * 1.5;
-box.x = canvas.width * 0.75 - box.halfWidth();
-box.y = canvas.height * 0.5 - box.halfHeight();
+box.height = box.sourceHeight * 1;
+box.width = box.sourceWidth * 2;
+box.x = canvas.width * 0.5 - box.halfWidth();
+box.y = canvas.height * 0.80 - box.halfHeight();
 sprites.push(box);
 
 //Load the tile sheet
@@ -40,25 +40,27 @@ const UP = 38;
 const DOWN = 40;
 const RIGHT = 39;
 const LEFT = 37;
+const SPACE = 32;
 
 //Directions
-let moveUp = false;
-let moveDown = false;
+//let moveUp = false;
+//let moveDown = false;
 let moveRight = false;
 let moveLeft = false;
+let jump = false;
 
 //Add keyboard listeners
 window.addEventListener("keydown", function(event)
 {
   switch(event.keyCode)
   {
-    case UP:
-      moveUp = true;
-      break;
-
-    case DOWN:
-      moveDown = true;
-      break;
+    // case UP:
+    //   moveUp = true;
+    //   break;
+    //
+    // case DOWN:
+    //   moveDown = true;
+    //   break;
 
     case RIGHT:
       moveRight = true;
@@ -67,6 +69,10 @@ window.addEventListener("keydown", function(event)
     case LEFT:
       moveLeft = true;
       break;
+
+    case SPACE:
+      jump = true;
+      break;
   }
 }, false);
 
@@ -74,13 +80,13 @@ window.addEventListener("keyup", function(event)
 {
   switch(event.keyCode)
   {
-    case UP:
-      moveUp = false;
-      break;
-
-    case DOWN:
-      moveDown = false;
-      break;
+    // case UP:
+    //   moveUp = false;
+    //   break;
+    //
+    // case DOWN:
+    //   moveDown = false;
+    //   break;
 
     case RIGHT:
       moveRight = false;
@@ -88,6 +94,10 @@ window.addEventListener("keyup", function(event)
 
     case LEFT:
       moveLeft = false;
+      break;
+
+    case SPACE:
+      jump = false;
       break;
   }
 }, false);
@@ -131,18 +141,18 @@ function playGame()
 {
     //Set the cats accelerationif the keys are being pressed
     //Up
-    if(moveUp && !moveDown)
-    {
-      cat.accelerationY = -0.2;
-      cat.gravity = 0;
-      cat.friction = 1;
-    }
-    //Down
-    if(!moveUp && moveDown)
-    {
-      cat.accelerationY = 0.2;
-      cat.friction = 1;
-    }
+    // if(moveUp && !moveDown)
+    // {
+    //   cat.accelerationY = -0.2;
+    //   cat.gravity = 0;
+    //   cat.friction = 1;
+    // }
+    // //Down
+    // if(!moveUp && moveDown)
+    // {
+    //   cat.accelerationY = 0.2;
+    //   cat.friction = 1;
+    // }
     //Left
     if(moveLeft && !moveRight)
     {
@@ -155,18 +165,30 @@ function playGame()
       cat.accelerationX = 0.2;
       cat.friction = 1;
     }
-
-    //Set the cat's velocity an acceleration to zero if none of the key are beings pressed
-    if(!moveUp && ! moveDown)
+    if(jump && cat.isOnGround)
     {
-      cat.accelerationY = 0;
+      cat.vy += cat.jumpForce;
+      cat.isOnGround = false;
+      cat.friction = 1;
     }
+
+    // //Set the cat's velocity an acceleration to zero if none of the key are beings pressed
+    // if(!moveUp && ! moveDown)
+    // {
+    //   cat.accelerationY = 0;
+    // }
     if(!moveLeft && !moveRight)
     {
       cat.accelerationX = 0;
     }
+
     //Reset friction when keys are released
-    if(!moveUp && !moveDown && !moveLeft && !moveRight)
+    // if(!moveUp && !moveDown && !moveLeft && !moveRight)
+    // {
+    //   cat.friction = spriteObject.friction;
+    //   cat.gravity = spriteObject.gravity;
+    // }
+    if(!jump && !moveLeft && !moveRight)
     {
       cat.friction = spriteObject.friction;
       cat.gravity = spriteObject.gravity;
@@ -177,8 +199,12 @@ function playGame()
     cat.vy += cat.accelerationY;
 
     //Apply friction
-    cat.vx *= cat.friction;
+    //cat.vx *= cat.friction;
     // cat.vy *= cat.friction;
+    if(cat.isOnGround)
+    {
+      cat.vx *=cat.friction;
+    }
 
     //Apply gravity
     cat.vy += cat.gravity;
@@ -197,10 +223,10 @@ function playGame()
       cat.vy = cat.speedLimit * 2;
       console.log("terminal velocity!")
     }
-    if(cat.vy < -cat.speedLimit)
-    {
-      cat.vy = -cat.speedLimit;
-    }
+    // if(cat.vy < -cat.speedLimit)
+    // {
+    //   cat.vy = -cat.speedLimit;
+    // }
 
     //Move the cat
     cat.x += cat.vx;
@@ -232,8 +258,9 @@ function playGame()
     }
     if(cat.y + cat.height > canvas.height)
     {
-      cat.vy *= cat.bounce;
       cat.y = canvas.height - cat.height;
+      cat.isOnGround = true;
+      cat.vy = -cat.gravity;
     }
 }
 
