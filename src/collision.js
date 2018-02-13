@@ -172,6 +172,10 @@ function hitTestRectangle(r1, r2)
 
 function blockRectangle(r1, r2, bounce)
 {
+
+  //set bounciness
+  let bounciness = r1.bounce;
+
   //Set bounce to a default value of false if it's not specified
   if(typeof bounce === "undefined")
   {
@@ -229,9 +233,9 @@ function blockRectangle(r1, r2, bounce)
         }
 
         //Bounce
-        if(bounce)
+        if(collisionSide !== "bottom" && bounce)
         {
-          r1.vy *= -1;
+          r1.vy *= bounciness;
         }
       }
       else
@@ -256,7 +260,7 @@ function blockRectangle(r1, r2, bounce)
         //Bounce
         if(bounce)
         {
-          r1.vx *= -1;
+          r1.vx *= bounciness;
         }
       }
     }

@@ -238,7 +238,32 @@ function playGame()
     // console.log("-----------------");
 
     //Check for collisions between the cat and the box
-    blockRectangle(cat, box, true);
+    let collisionSide = blockRectangle(cat, box, true);
+
+    if(collisionSide === "bottom" && cat.vy >= 0)
+    {
+      //Tell the game that the cat is on the ground if it is standing on top of a platform
+      cat.isOnGround = true;
+
+      //Neutralize gravity by applying its exact opposite forece to the character's vy
+      cat.vy = -cat.gravity;
+    }
+    else if(collisionSide === "top" && cat.vy <= 0)
+    {
+      cat.vy = 0;
+    }
+    else if(collisionSide === "right" && cat.vx >= 0)
+    {
+      cat.vx = 0;
+    }
+    else if(collisionSide === "left" && cat.vx <= 0)
+    {
+      cat.vx = 0;
+    }
+    if(collisionSide !== "bottom" && cat.vy > 0)
+    {
+      cat.isOnGround = false;
+    }
 
     //Screen boundaries
     if(cat.x < 0)

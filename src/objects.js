@@ -19,7 +19,7 @@ let spriteObject =
   accelerationX: 0,
   accelerationY: 0,
   speedLimit: 5,
-  friction: 0.96,
+  friction: 0.9,
   bounce: -0.7,
   gravity: 0.3,
 
