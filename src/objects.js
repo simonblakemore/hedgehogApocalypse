@@ -44,6 +44,22 @@ let spriteObject =
   halfHeight: function()
   {
     return this.height / 2;
+  },
+  left: function()
+  {
+    return this.x;
+  },
+  right: function()
+  {
+    return this.x + this.width;
+  },
+  top: function()
+  {
+    return this.y;
+  },
+  bottom: function()
+  {
+    return this.y + this.height;
   }
 };
 

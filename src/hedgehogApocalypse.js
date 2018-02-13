@@ -11,14 +11,23 @@ let assetsLoaded = 0;
 
 //The cat
 let cat = Object.create(spriteObject);
+cat.sourceX = 64;
 cat.x = canvas.width / 2 - cat.halfWidth();
 cat.y = canvas.height / 2 - cat.halfHeight();
 sprites.push(cat);
 
+//The Box
+let box = Object.create(spriteObject);
+box.height = box.sourceHeight * 1.5;
+box.width = box.sourceWidth * 1.5;
+box.x = canvas.width * 0.75 - box.halfWidth();
+box.y = canvas.height * 0.5 - box.halfHeight();
+sprites.push(box);
+
 //Load the tile sheet
 let image = new Image();
 image.addEventListener("load", loadHandler, false);
-image.src = "../images/cat.png";
+image.src = "../images/catAndBox.png";
 assetsToLoad.push(image);
 
 //The game states
@@ -84,7 +93,6 @@ window.addEventListener("keyup", function(event)
 }, false);
 
 //Start the game animation loop
-debugger;
 update();
 
 
@@ -197,21 +205,28 @@ function playGame()
     console.log("cat.vy: " + cat.vy);
     console.log("-----------------");
 
+    //Check for collisions between the cat and the box
+    blockRectangle(cat, box, true); 
+
     //Screen boundaries
     if(cat.x < 0)
     {
+      cat.vx *= cat.bounce;
       cat.x = 0;
     }
     if(cat.y < 0)
     {
+      cat.vy *= cat.bounce;
       cat.y = 0;
     }
     if(cat.x + cat.width > canvas.width)
     {
+      cat.vx *= cat.bounce;
       cat.x = canvas.width - cat.width;
     }
     if(cat.y + cat.height > canvas.height)
     {
+      cat.vy *= cat.bounce;
       cat.y = canvas.height - cat.height;
     }
 }
