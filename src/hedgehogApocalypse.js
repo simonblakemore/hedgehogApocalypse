@@ -134,6 +134,7 @@ function playGame()
     if(moveUp && !moveDown)
     {
       cat.accelerationY = -0.2;
+      cat.gravity = 0;
       cat.friction = 1;
     }
     //Down
@@ -168,6 +169,7 @@ function playGame()
     if(!moveUp && !moveDown && !moveLeft && !moveRight)
     {
       cat.friction = spriteObject.friction;
+      cat.gravity = spriteObject.gravity;
     }
 
     //Apply the acceleration
@@ -176,7 +178,10 @@ function playGame()
 
     //Apply friction
     cat.vx *= cat.friction;
-    cat.vy *= cat.friction;
+    // cat.vy *= cat.friction;
+
+    //Apply gravity
+    cat.vy += cat.gravity;
 
     //Limit the speed
     if(cat.vx > cat.speedLimit)
@@ -187,9 +192,10 @@ function playGame()
     {
       cat.vx = -cat.speedLimit;
     }
-    if(cat.vy > cat.speedLimit)
+    if(cat.vy > cat.speedLimit * 2)
     {
-      cat.vy = cat.speedLimit;
+      cat.vy = cat.speedLimit * 2;
+      console.log("terminal velocity!")
     }
     if(cat.vy < -cat.speedLimit)
     {
@@ -201,12 +207,12 @@ function playGame()
     cat.y += cat.vy;
 
     //Display the result
-    console.log("cat.vx: " + cat.vx);
-    console.log("cat.vy: " + cat.vy);
-    console.log("-----------------");
+    // console.log("cat.vx: " + cat.vx);
+    // console.log("cat.vy: " + cat.vy);
+    // console.log("-----------------");
 
     //Check for collisions between the cat and the box
-    blockRectangle(cat, box, true); 
+    blockRectangle(cat, box, true);
 
     //Screen boundaries
     if(cat.x < 0)
