@@ -126,38 +126,49 @@ function playGame()
     if(moveUp && !moveDown)
     {
       cat.accelerationY = -0.2;
+      cat.friction = 1;
     }
     //Down
     if(!moveUp && moveDown)
     {
       cat.accelerationY = 0.2;
+      cat.friction = 1;
     }
     //Left
     if(moveLeft && !moveRight)
     {
       cat.accelerationX = -0.2;
+      cat.friction = 1;
     }
     //Right
     if(!moveLeft && moveRight)
     {
       cat.accelerationX = 0.2;
+      cat.friction = 1;
     }
 
     //Set the cat's velocity an acceleration to zero if none of the key are beings pressed
     if(!moveUp && ! moveDown)
     {
       cat.accelerationY = 0;
-      cat.vy = 0;
     }
     if(!moveLeft && !moveRight)
     {
       cat.accelerationX = 0;
-      cat.vx = 0;
+    }
+    //Reset friction when keys are released
+    if(!moveUp && !moveDown && !moveLeft && !moveRight)
+    {
+      cat.friction = spriteObject.friction;
     }
 
     //Apply the acceleration
     cat.vx += cat.accelerationX;
     cat.vy += cat.accelerationY;
+
+    //Apply friction
+    cat.vx *= cat.friction;
+    cat.vy *= cat.friction;
 
     //Limit the speed
     if(cat.vx > cat.speedLimit)
