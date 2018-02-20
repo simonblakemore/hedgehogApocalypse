@@ -96,8 +96,14 @@ function hitTestCircle(c1, c2)
 
 //blockCircle
 
-function blockCircle(c1, c2)
+function blockCircle(c1, c2, bounce)
 {
+  //Set bounce to a default value of false if its not specified
+  if (typeof bounce === "undefined")
+  {
+    bounce = false;
+  }
+
   //Calculate the vector between the circles’ center points
   var vx = c1.centerX() - c2.centerX();
   var vy = c1.centerY() - c2.centerY();
@@ -126,6 +132,20 @@ function blockCircle(c1, c2)
     //circle 1's position
     c1.x += overlap * dx;
     c1.y += overlap * dy;
+
+    if(bounce)
+    {
+      //Create a collision vector object to represent the bounce surface
+      let s = {};
+
+      //Find the bounce surface's vx and vy properties
+      //This represents the normal of the distance vector between the circles
+      s.vx = vy;
+      s.vy = -vx;
+
+      //Bounce c1 of the surface
+      bounceOffSurface(c1, s);
+    }
   }
 }
 
@@ -277,4 +297,49 @@ function blockRectangle(r1, r2, bounce)
   }
 
   return collisionSide;
+}
+
+//Use this to bouce an object off another object
+function bounceOffSurface(o, s)
+{
+  //1. Calculate the collision surface's properties
+
+  //Find the surface vector's left normal
+  s.lx = s.vy;
+  s.ly = s.vx;
+
+  //Find it;s magnitude
+  s.magnitude = Math.sqrt(s.vx * s.vx + s.vy * s.vy);
+
+  //Find its normalized values
+  s.dx = s.vx / s.magnitude;
+  s.dy = s.vy / s.magnitude;
+
+  //2. Bounce the object (o) iff the surface (s)
+
+  //Find the dot productbetween the object and the surface
+  let dp1 = o.vx * s.dx + o.vy * s.dy;
+
+  //Project the object's velocity onto the object and the surface
+  let p1Vx = dp1 * s.dx;
+  let p1Vy = dp1 * s.dy;
+
+  //Find the dot product of the object and the surface's left normal (s.lx and s.ly)
+  let dp2 = o.vx * (s.lx / s.magnitude) + o.vy * (s.ly / s.magnitude);
+
+  //Project the object's velocity onto the surface's left normal
+  let p2Vx = dp2 * (s.lx / s.magnitude);
+  let p2Vy = dp2 * (s.ly / s.magnitude);
+
+  //Reverse the projection on the surface's left normal
+  p2Vx *= -1;
+  p2Vy *= -1;
+
+  //Add up the projections to create a new bounce vector
+  let bounceVx = p1Vx + p2Vx;
+  let bounceVy = p1Vy + p2Vy;
+
+  //Assign the bounce vector to the object's velocity
+  o.vx = bounceVx;
+  o.vy = bounceVy;
 }

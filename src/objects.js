@@ -13,20 +13,18 @@ let spriteObject =
   vx: 0,
   vy: 0,
   visible: true,
-  scrollable: true,
 
   //Physics properties
   accelerationX: 0,
   accelerationY: 0,
   speedLimit: 5,
-  friction: 0.9,
+  friction: 0.87,
   bounce: -0.7,
   gravity: 0.3,
 
   //Platform game properties
   isOnGround: undefined,
   jumpForce: -10,
-
 
   //Getters
   centerX: function()
@@ -45,23 +43,24 @@ let spriteObject =
   {
     return this.height / 2;
   },
-  left: function()
-  {
-    return this.x;
-  },
-  right: function()
-  {
-    return this.x + this.width;
-  },
-  top: function()
-  {
-    return this.y;
-  },
-  bottom: function()
-  {
-    return this.y + this.height;
-  }
 };
+
+//--- The Hedgehog object
+hedgehogObject = Object.create(spriteObject);
+
+//The Hedgehog states
+hedgehogObject.NORMAL = [1,0];
+hedgehogObject.SQUASHED = [2,0];
+hedgehogObject.state = hedgehogObject.NORMAL;
+
+hedgehogObject.update = function()
+{
+  this.sourceX = this.state[0] * this.sourceWidth;
+  this.sourceY = this.state[1] * this.sourceHeight;
+};
+
+//The hedgehog's allowed speed
+hedgehogObject.speed = 1;
 
 //--- The message object
 
@@ -74,33 +73,4 @@ let messageObject =
   font: "normal bold 20px Helvetica",
   fillStyle: "red",
   textBaseline: "top"
-};
-
-//--- The gameTimer object
-
-let gameTimer =
-{
-  time: 0,
-  interval: undefined,
-
-  start: function()
-  {
-    let self = this;
-    this.interval = setInterval(function(){self.tick();}, 1000);
-  },
-
-  tick: function ()
-  {
-    this.time--;
-  },
-
-  stop: function()
-  {
-    clearInterval(this.interval);
-  },
-
-  reset: function()
-  {
-    this.time = 0;
-  }
 };
